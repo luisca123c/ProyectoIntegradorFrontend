@@ -41,9 +41,9 @@
           </div>
 
           <div class="error__message">
-            <p>Usuario no encontrado</p>
+            <p>¡Upss, usuario no encontrado!</p>
           </div>
-
+          <!---Boton de enviar---->
           <button type="submit" class="btn btn--primary" id="submitBtn">
             <span class="btn__text">Enviar</span>
             <span class="btn__icon">➤</span>
@@ -66,6 +66,19 @@
               placeholder="Escribe la descripción de la tarea..." rows="4" aria-required="true"></textarea>
             <span class="form__error" id="taskDescriptionError"></span>
           </div>
+                    <!-- selector de estado de tareas -->
+          <div class="task__status"> 
+            <select name="select">
+              <option value="value1">Estado</option>
+              <option value="value2">Activa</option>
+              <option value="value3">Inactiva</option>
+            </select>
+          </div>
+          <!---Boton de enviar---->
+          <button type="submit" class="btn btn--primary" id="submitBtn">
+            <span class="btn__text">Enviar</span>
+            <span class="btn__icon">➤</span>
+          </button>
         </div>
       </form>
     </section>
