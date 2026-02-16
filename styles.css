@@ -188,6 +188,12 @@ body {
     margin-bottom: var(--spacing-lg);
 }
 
+.form__group--disposicion {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
 .form__label {
     display: block;
     font-size: var(--font-size-sm);
@@ -241,6 +247,7 @@ body {
 }
 
 .container__form{
+   /* display: none;  ************************************************** */
   border-radius: var(--radius-lg);
   border-left: solid var(--color-primary) 5px;
   padding: var(--spacing-md);
@@ -309,8 +316,10 @@ body {
    SECCIÓN DE MENSAJES
    ============================================ */
 .error__message{                /*Error que sale cuando el usuario no se encuentra */
+  display: block;
   color: var(--color-error);
-  text-align: var(--text-aling-center);
+  text-align: center;
+  margin-top: var(--spacing-md);
 }
 .messages-section {
     margin-bottom: var(--spacing-2xl);
@@ -434,19 +443,6 @@ body {
     color: var(--color-text-secondary);
     line-height: 1.6;
     word-wrap: break-word;
-}
-
-.task__status select{            /*selector de esado de tareas*/
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
-  padding: 5px 10px;
-  border-radius: var(--radius-sm);
-  padding-bottom: 10px;
-  border: solid 2px var(--color-gray-500);
-}
-.task__status select:focus{
-  border: solid 2px var(--color-primary-dark);
 }
 
 /* ============================================
