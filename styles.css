@@ -430,13 +430,16 @@ body {
 }
 
 .task__status select{            /*selector de esado de tareas*/
-  padding: 8px;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  padding: 5px 10px;
   border-radius: var(--radius-sm);
   padding-bottom: 10px;
-  border: solid 1px var(--color-primary-light);
+  border: solid 2px var(--color-gray-500);
 }
 .task__status select:focus{
-  border: solid 1px var(--color-primary-dark);
+  border: solid 2px var(--color-primary-dark);
 }
 
 /* ============================================
