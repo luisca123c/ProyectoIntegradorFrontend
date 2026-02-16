@@ -17,7 +17,7 @@
 
     <!-- Formulario de entrada -->
     <section class="form-section">
-      <form id="messageForm" class="form" novalidate>
+      <form id="documentForm" class="form" novalidate>
 
         <!-- Card1: Datos del Usuario -->
         <div class="card">
@@ -40,11 +40,13 @@
             <span class="btn__text">Enviar</span>
           </button>
         </div>
-
+      </form>
+      <form id="taskForm" class="form">
         <!-- Card2: Detalles de la Tarea -->
         <div class="card">
           <h2 class="card__title">Detalles de la Tarea</h2>
           <div class="form__group">
+            
             <label for="taskName" class="form__label">Título de la tarea</label>
             <input type="text" id="taskName" class="form__input" placeholder="Ingresa el título de la tarea"
               aria-required="true">
@@ -80,7 +82,7 @@
 
           <!---Boton de enviar---->
           <button type="submit" class="btn btn--primary" id="submitBtn">
-            <span class="btn__text">Enviar</span>
+            <span class="btn__text">Crear tarea</span>
           </button>
         </div>
       </form>
