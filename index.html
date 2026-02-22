@@ -4,72 +4,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Mensajes - Ejercicio DOM</title>
+  <title>Gestión de Tareas - SENA</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
   <div class="container">
-    <!-- Encabezado principal -->
     <header class="header">
-      <h1 class="header__title">Registro de Tareas</h1>
+      <h1 class="header__title">Gestión de Tareas</h1>
+      <p class="header__subtitle">Consulta de usuarios y asignación dinámica de actividades</p>
     </header>
 
-    <!-- Formulario de entrada -->
     <section class="form-section">
-      <form id="documentForm" class="form" novalidate>
-
-        <!-- Card1: Datos del Usuario -->
-        <div class="card">
-          <h2 class="card__title">Datos del Usuario</h2>
+      <div class="card">
+        <h2 class="card__title">1. Identificación del Usuario</h2>
+        <form id="searchForm" class="form">
           <div class="form__group">
-            <label for="userDocument" class="form__label">Documento</label>
-            <input type="text" id="userDocument" class="form__input" placeholder="Ingresa tu documento de identidad"
-              aria-required="true">
+            <label for="userDoc" class="form__label">Documento del Usuario</label>
+            <input type="text" id="userDoc" class="form__input" placeholder="Ej: 10101" required>
+            <span class="form__error" id="searchError"></span>
           </div>
-          <span class="error__message" id="userDocumentError"></span>
-          <!---Caja que se muestra si existe el usuario---->
-          <div class="container__form">
-              <p><strong>Nombre:</strong><span id="userName"></span></p>
-              <p><strong>Correo electronico:</strong><span id="userEmail"></span></p>
-          </div>
-          
-          
-          <!---Boton de enviar---->
-          <button type="submit" class="btn btn--primary" id="submitBtn">
-            <span class="btn__text">Enviar</span>
+          <button type="submit" class="btn btn--primary" id="searchBtn">
+            <span class="btn__text">Buscar Usuario</span>
+            <span class="btn__icon">🔍</span>
           </button>
+        </form>
+
+        <div id="userInfo" class="user-info hidden">
+          <div class="user-info__content">
+            <p><strong>Nombre:</strong> <span id="infoNombre"></span></p>
+            <p><strong>Correo:</strong> <span id="infoCorreo"></span></p>
+          </div>
         </div>
-      </form>
-      <form id="taskForm" class="form">
-        <!-- Card2: Detalles de la Tarea -->
-        <div class="card">
-          <h2 class="card__title">Detalles de la Tarea</h2>
+      </div>
+    </section>
+    
+    <section id="taskSection" class="form-section hidden">
+      <div class="card">
+        <h2 class="card__title">2. Registrar Nueva Tarea</h2>
+        <form id="taskForm" class="form">
           <div class="form__group">
-            
-            <label for="taskName" class="form__label">Título de la tarea</label>
-            <input type="text" id="taskName" class="form__input" placeholder="Ingresa el título de la tarea"
-              aria-required="true">
-            <span span class="form__error" id="taskNameError"></span>
+            <label for="taskTitle" class="form__label">Título de la Tarea</label>
+            <input type="text" id="taskTitle" class="form__input" placeholder="¿Qué hay que hacer?" required>
           </div>
 
           <div class="form__group">
-            <label for="taskDescription" class="form__label">Descripción de la tarea</label>
-            <textarea id="taskDescription" class="form__input form__textarea"
-              placeholder="Escribe la descripción de la tarea..." rows="4" aria-required="true"></textarea>
-            <span class="form__error" id="taskDescriptionError"></span>
+            <label for="taskDesc" class="form__label">Descripción</label>
+            <textarea id="taskDesc" class="form__input form__textarea" placeholder="Detalles de la tarea..." rows="3"
+              required></textarea>
           </div>
 
-          <div class="form__group--disposicion">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
             <div class="form__group">
               <label for="taskStatus" class="form__label">Estado</label>
               <select id="taskStatus" class="form__input">
                 <option value="Pendiente">Pendiente</option>
-                <option value="En progreso">En progreso</option>
-                <option value="Completado">Completada</option>
+                <option value="En Progreso">En Progreso</option>
+                <option value="Completada">Completada</option>
               </select>
             </div>
-
             <div class="form__group">
               <label for="taskPriority" class="form__label">Importancia</label>
               <select id="taskPriority" class="form__input">
@@ -80,40 +73,43 @@
             </div>
           </div>
 
-          <!---Boton de enviar---->
-          <button type="submit" class="btn btn--primary" id="submitBtn">
-            <span class="btn__text">Crear tarea</span>
+          <button type="submit" class="btn btn--primary">
+            <span class="btn__text">Asignar Tarea</span>
+            <span class="btn__icon">➕</span>
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </section>
 
-    <!-- Área de mensajes -->
     <section class="messages-section">
       <div class="messages-header">
-        <h2 class="messages-header__title">Mensajes Publicados</h2>
-        <span class="messages-header__count" id="messageCount">0 mensajes</span>
+        <h2 class="messages-header__title">Tareas del Usuario</h2>
+        <span class="messages-header__count" id="taskCount">0 tareas</span>
       </div>
 
-      <div id="messagesContainer" class="messages-container">
-        <!-- Los mensajes se agregarán aquí dinámicamente -->
-        <div class="messages-empty" id="emptyState">
-          <svg class="messages-empty__icon" width="64" height="64" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
-          <p class="messages-empty__text">Aún no hay mensajes</p>
-          <p class="messages-empty__subtext">Completa el formulario para agregar tu primer mensaje</p>
+      <div class="card" style="overflow-x: auto;">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Descripción</th>
+              <th>Importancia</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="taskTableBody">
+          </tbody>
+        </table>
+        <div class="messages-empty" id="emptyTasks">
+          <p class="messages-empty__text">No hay tareas registradas para este usuario</p>
         </div>
       </div>
     </section>
 
-    <!-- Footer informativo -->
     <footer class="footer">
-      <p class="footer__text">Ejercicio de manipulación del DOM | SENA - Desarrollo Web</p>
+      <p class="footer__text">Proyecto Integrador | Gestión de Tareas v1.0</p>
     </footer>
   </div>
-
   <script src="script.js"></script>
 </body>
 
