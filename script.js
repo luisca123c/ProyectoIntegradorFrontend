@@ -1,8 +1,5 @@
-/**
- * ============================================
- *                Importaciones
- * ============================================
-*/
+
+import { validar } from "./helpers/validarDocumento.js";
 
 
 /**
@@ -12,7 +9,6 @@
  */
 
 // selección de elementos del dom
-const searchForm = document.getElementById('searchForm'); 
 const taskForm = document.getElementById('taskForm');
 
 // campos de entrada (actualizados según el nuevo html)
@@ -33,7 +29,6 @@ const emptyTasksState = document.getElementById('emptyTasks');
 // variables de estado
 let currentUser = null;
 let totalTasks = 0;
-const api_url = "http://localhost:3001";
 
 // ============================================
 //            funciones y metodos
@@ -341,4 +336,68 @@ document.addEventListener('DOMContentLoaded', function() {
     userDocInput.addEventListener('input', handleInputChange);
     taskTitleInput.addEventListener('input', handleInputChange);
     taskDescInput.addEventListener('input', handleInputChange);
+});
+
+
+/**
+ * ============================================
+ *                Importaciones
+ * ============================================
+*/
+
+// import { getUsuario } from "./use-case/index.js";
+
+
+/**
+ * ============================================
+*              Variables y Constantes
+ * ============================================
+*/
+
+const api_url = "http://localhost:3001";
+const searchForm = document.querySelector('#searchForm');
+const userDoc = document.querySelector('#userDoc');
+const userDocError = document.querySelector('#searchError');
+
+
+const reglas_documento ={
+    userDoc :{ required: true, mensaje: "el campo no puede estar vacio", typeof: "number" },
+}
+
+/**
+ * ============================================
+*              Funciones y Métodos
+ * ============================================
+*/
+
+const validarDocumento = (e) => {
+    let respuesta = validar(e, reglas_documento);
+    userDoc.classList.remove('error');
+    if(!respuesta.valido)    {
+        userDoc.classList.add('error');
+        userDocError.textContent = respuesta.errores;
+    }
+    if(!respuesta.valido) {
+        return{
+            esvalido: respuesta.valido
+        }
+    }
+    else {
+        return {
+            esvalido: respuesta.valido,
+            documento: respuesta.value
+        }
+    }
+}
+
+/**
+ * ============================================
+*                    Eventos
+ * ============================================
+*/
+
+searchForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const {esvalido, documento, nombre, genero, ciudad, correo} = validarDocumento(e.target);
+    if(!esvalido) {return;}
 });
