@@ -1,5 +1,5 @@
 export const eliminarTarea = async(id) => {
-  const solicitud = fetch(`http://localhost:3001/tasks/${id}`, {
+  const solicitud = await fetch(`http://localhost:3001/tasks/${id}`, {
     method: 'DELETE',
   });
   if (solicitud.ok) {

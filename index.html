@@ -21,7 +21,7 @@
         <form id="searchForm" class="form">
           <div class="form__group">
             <label for="userDoc" class="form__label">Documento del Usuario</label>
-            <input type="text" id="userDoc" class="form__input" placeholder="Ej: 10101" required>
+            <input type="text" id="userDoc" class="form__input" placeholder="Ej: 10101">
             <span class="form__error" id="searchError"></span>
           </div>
           <button type="submit" class="btn btn--primary" id="searchBtn">
@@ -89,6 +89,18 @@
 
       <div class="card" style="overflow-x: auto;">
         <table class="task-table">
+          <div class="btn__delete">
+            <button class="btn btn--danger" id="deleteAllBtn">
+              <span class="btn__text">Eliminar tarea</span>
+              <span class="btn__icon">🗑️</span>
+            </button>
+            <!-- <div class="btn__update">
+              <button class="btn btn--secondary" id="updateAllBtn">
+                <span class="btn__text">Editar tarea</span>
+                <span class="btn__icon">✏️</span>
+              </button>
+            </div> -->
+          </div>
           <thead>
             <tr>
               <th>Título</th>
@@ -103,6 +115,12 @@
         <div class="messages-empty" id="emptyTasks">
           <p class="messages-empty__text">No hay tareas registradas para este usuario</p>
         </div>
+        <div class="btn__update">
+          <button class="btn btn--secondary" id="updateAllBtn">
+            <span class="btn__text">Editar tarea</span>
+            <span class="btn__icon">✏️</span>
+          </button>
+        </div>
       </div>
     </section>
 
@@ -110,7 +128,7 @@
       <p class="footer__text">Proyecto Integrador | Gestión de Tareas v1.0</p>
     </footer>
   </div>
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 
 </html>
