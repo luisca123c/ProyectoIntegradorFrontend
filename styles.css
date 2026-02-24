@@ -507,3 +507,65 @@ body {
         transform: scale(0.95);
     }
 }
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+.alta { background-color: #fee2e2; color: #ef4444; }
+.media { background-color: #fef3c7; color: #d97706; }
+.baja { background-color: #d1fae5; color: #10b981; }
+
+table th {
+    color: var(--color-primary);
+    background-color: var(--color-gray-50);
+}
+
+/* Estilos adicionales para la tabla y tags */
+.hidden { display: none !important; }
+
+.user-info {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: var(--color-primary-lighter);
+    border-radius: var(--radius-md);
+    border-left: 5px solid var(--color-primary);
+}
+
+.task-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.task-table th, .task-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-gray-200);
+}
+
+.task-table th {
+    background-color: var(--color-gray-50);
+    color: var(--color-primary);
+    font-size: var(--font-size-sm);
+}
+
+.priority-tag {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.priority-tag.alta { background: #fee2e2; color: #ef4444; }
+.priority-tag.media { background: #fef3c7; color: #d97706; }
+.priority-tag.baja { background: #d1fae5; color: #10b981; }
+
+.user-info__content p {
+    margin-bottom: 0.5rem;
+    font-size: var(--font-size-sm);
+}
