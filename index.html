@@ -38,7 +38,7 @@
         </div>
       </div>
     </section>
-
+    
     <section id="taskSection" class="form-section hidden">
       <div class="card">
         <h2 class="card__title">2. Registrar Nueva Tarea</h2>
@@ -87,7 +87,19 @@
         <span class="messages-header__count" id="taskCount">0 tareas</span>
       </div>
 
-      <div id="tasksContainer" class="tasks-container">
+      <div class="card" style="overflow-x: auto;">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Descripción</th>
+              <th>Importancia</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="taskTableBody">
+          </tbody>
+        </table>
         <div class="messages-empty" id="emptyTasks">
           <p class="messages-empty__text">No hay tareas registradas para este usuario</p>
         </div>
@@ -98,7 +110,7 @@
       <p class="footer__text">Proyecto Integrador | Gestión de Tareas v1.0</p>
     </footer>
   </div>
-  <script type="module" src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 
 </html>
