@@ -1,403 +1,173 @@
-
 import { validar } from "./helpers/validarDocumento.js";
+import { crearCardTarea } from './components/tareas.js';
+import { getTareas } from './use-case/tareas/getTareas.js';
+import { postTarea } from './use-case/tareas/postTareas.js';
+import { eliminarTarea } from './use-case/tareas/deleteTarea.js'; // Según tu imagen
+import { editarTarea } from './use-case/tareas/updateTarea.js';   // Según tu imagen
 
-
-/**
- * ============================================
- * ejercicio de manipulacion del dom - gestion de tareas
- * ============================================
- */
-
-// selección de elementos del dom
+// --- Selección de elementos ---
+const api_url = "http://localhost:3001";
+const searchForm = document.getElementById('searchForm');
 const taskForm = document.getElementById('taskForm');
-
-// campos de entrada (actualizados según el nuevo html)
 const userDocInput = document.getElementById('userDoc');
-const taskTitleInput = document.getElementById('taskTitle');
-const taskDescInput = document.getElementById('taskDesc');
-const taskStatusInput = document.getElementById('taskStatus');
-const taskPriorityInput = document.getElementById('taskPriority');
 
-// elementos de visualización
-const searchError = document.getElementById('searchError');
 const userInfoSection = document.getElementById('userInfo');
 const taskSection = document.getElementById('taskSection');
-const taskTableBody = document.getElementById('taskTableBody');
+const tasksContainer = document.getElementById('tasksContainer');
 const taskCountLabel = document.getElementById('taskCount');
 const emptyTasksState = document.getElementById('emptyTasks');
+const searchError = document.getElementById('searchError');
 
-// variables de estado
+// --- Estado ---
 let currentUser = null;
 let totalTasks = 0;
+let isEditing = false;
+let editTaskId = null;
 
-// ============================================
-//            funciones y metodos
-// ============================================
+const reglas_documento = {
+    userDoc: { required: true, mensaje: "El campo no puede estar vacío", typeof: "text" },
+};
 
-/**
- * valida que un campo no esté vacío ni contenga solo espacios en blanco
- * @param {string} value - el valor a validar
- * @returns {boolean} - true si es válido, false si no lo es
- */
-function isValidInput(value) {
-    // retorna true si después de trim() el string tiene longitud > 0
-    if(value.trim().length > 0)
-    {
-        return true
-    }
-    else {
-        return false
-    }
-}
-
-/**
- * muestra un mensaje de error en un elemento específico
- */
-function showError(errorElement, message) {
-    errorElement.textContent = "";
-    errorElement.classList.add(`error`);
-    
-    // validación según el id del elemento de error del buscador
-    if(errorElement.id == "searchError")
-    {
-        errorElement.append(message);
-    } else {
-        errorElement.textContent = message;
-    }
-}
-
-/**
- * limpia el mensaje de error de un elemento específico
- */
-function clearError(errorElement) {
-    errorElement.classList.remove(`error`);
-    errorElement.textContent = "";
-}
-
-/**
- * Valida todos los campos del formulario
- * @returns {boolean} - true si todos los campos son válidos, false si alguno no lo es
- */
-/**
- * valida todos los campos del formulario de tareas
- */
-function validateForm() {
-    const title = taskTitleInput.value;
-    const desc = taskDescInput.value;
-    let isValid = true;
-    
-    if (!isValidInput(title)) {
-        taskTitleInput.classList.add('error');
-        isValid = false;
-    } else {
-        taskTitleInput.classList.remove('error');
-    }
-    
-    if (!isValidInput(desc)) {
-        taskDescInput.classList.add('error');
-        isValid = false;
-    } else {
-        taskDescInput.classList.remove('error');
-    }
-    
-    return isValid;
-}
-
-/**
- * Obtiene la fecha y hora actual formateada
- * @returns {string} - Fecha y hora en formato legible
- */
-function getCurrentTimestamp() {
-    const now = new Date();
-    const options = { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    };
-    return now.toLocaleDateString('es-ES', options);
-}
-
-/**
- * obtiene las iniciales de un nombre
- * @param {string} name - nombre completo
- * @returns {string} - iniciales en mayúsculas
- */
-function getInitials(name) {
-    // todo: implementar función para obtener iniciales
-    // 1. separar el nombre por espacios usando split(' ')
-    const words = name.split(' ');
-    // 4. si solo hay una palabra, retornar las dos primeras letras
-    if (words.length === 1) {
-        return words[0].substring(0, 2).toUpperCase();
-    }
-    // 2. tomar la primera letra de cada palabra
-    // 3. unirlas y convertirlas a mayúsculas
-    let initials = words[0][0] + words[words.length - 1][0];
-    return initials.toUpperCase();
-}
-
-/**
- * actualiza el contador de mensajes
- */
+// --- Utilidades ---
 function updateMessageCount() {
-    // todo: implementar actualización del contador
-    // pista: usa template literals para crear el texto
     taskCountLabel.textContent = `${totalTasks} ${totalTasks === 1 ? 'tarea' : 'tareas'}`;
 }
 
-/**
- * oculta el estado vacío (mensaje cuando no hay mensajes)
- */
-function hideEmptyState() {
-    // todo: implementar función para ocultar el estado vacío
-    // pista: añade la clase 'hidden' al elemento emptyTasksState
-    if (emptyTasksState) {
-        emptyTasksState.classList.add('hidden');
-    }
+function hideEmptyState() { if (emptyTasksState) emptyTasksState.classList.add('hidden'); }
+function showEmptyState() { if (emptyTasksState) emptyTasksState.classList.remove('hidden'); }
+
+function getCurrentTimestamp() {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date().toLocaleDateString('es-ES', options);
 }
 
-/**
- * muestra el estado vacío (mensaje cuando no hay mensajes)
- */
-function showEmptyState() {
-    // todo: implementar función para mostrar el estado vacío
-    // pista: remueve la clase 'hidden' del elemento emptyState
-    if (emptyTasksState) {
-        emptyTasksState.classList.remove('hidden');
-    }
+function resetForm() {
+    isEditing = false;
+    editTaskId = null;
+    taskForm.reset();
+    document.querySelector('#taskSection .card__title').textContent = "2. Registrar Nueva Tarea";
+    const btnText = document.querySelector('#taskForm .btn__text');
+    if (btnText) btnText.textContent = "Asignar Tarea";
 }
 
-/**
- * crea un nuevo elemento de mensaje en el dom
- * @param {string} userName - nombre del usuario
- * @param {string} message - contenido del mensaje
- */
-function createMessageElement(userName, message) { 
-    // paso 1: crear el contenedor principal (en este caso una fila de tabla)
-    const row = document.createElement('tr');
-    // paso 2: crear la estructura html (adaptada a la tabla del nuevo html)
-    const title = taskTitleInput.value;
-    const desc = taskDescInput.value;
-    const priority = taskPriorityInput.value;
-    const status = taskStatusInput.value;
-    const priorityClass = priority.toLowerCase();
-    row.innerHTML = `
-        <td><strong>${title}</strong></td>
-        <td>${desc}</td>
-        <td><span class="priority-tag ${priorityClass}">${priority}</span></td>
-        <td>${status}</td>
-    `;
-    // paso 3: insertar el nuevo elemento en el contenedor
-    taskTableBody.insertBefore(row, taskTableBody.firstChild);
-    // paso 4: incrementar el contador
-    totalTasks++;
-    // paso 5: actualizar el contador visual
+// --- Lógica Principal ---
+function limpiarTareas() {
+    const cards = tasksContainer.querySelectorAll('.task-card');
+    cards.forEach(card => card.remove());
+    totalTasks = 0;
     updateMessageCount();
-    // paso 6: ocultar el estado vacío
+    showEmptyState();
+}
+
+async function renderTareasUsuario(userId) {
+    const tareas = await getTareas(userId);
+    if (tareas.length === 0) {
+        showEmptyState();
+        return;
+    }
+    tareas.forEach(tarea => {
+        const card = crearCardTarea(tarea);
+        tasksContainer.insertBefore(card, emptyTasksState);
+        totalTasks++;
+    });
+    updateMessageCount();
     hideEmptyState();
 }
 
-// ============================================
-//                  EVENTOS
-// ============================================
-
-/**
- * maneja la búsqueda de usuario en el servidor
- */
-async function handleSearchSubmit(event) {
-    // prevenir comportamiento por defecto
-    event.preventDefault();
-    
-    // obtener valor del documento
-    const docValue = userDocInput.value;
-
-    if(isValidInput(docValue)) {
-        try {
-            // realizar peticion al puerto 3000
-            const response = await fetch(`${api_url}/users/${docValue}`);
-            
-            if (!response.ok) {
-                throw new Error("usuario no encontrado");
-            }
-
-            const user = await response.json();
-
-            // guardar usuario en el estado global
-            currentUser = user;
-            
-            // actualizar interfaz con los datos del json
-            document.getElementById('infoNombre').textContent = user.nombre_completo;
-            document.getElementById('infoCorreo').textContent = user.correo;
-            
-            // mostrar secciones de tareas y usuario
-            userInfoSection.classList.remove('hidden');
-            taskSection.classList.remove('hidden');
-            
-            // limpiar errores previos
-            clearError(searchError);
-            
-            console.log('usuario cargado correctamente');
-
-        } catch (error) {
-            // manejar error si el usuario no existe en db.json
-            currentUser = null;
-            userInfoSection.classList.add('hidden');
-            taskSection.classList.add('hidden');
-            showError(searchError, "usuario no registrado en el sistema");
-        }
-    } else {
-        showError(searchError, "el campo no puede estar vacio");
-    }
-}
-
-/**
- * maneja el evento de envío del formulario de tareas
- * @param {Event} event - evento del formulario
- */
-async function handleFormSubmit(event) {    
-    // paso 1: prevenir el comportamiento por defecto del formulario
-    event.preventDefault();
-
-    // paso 2: validar el formulario
-    if(validateForm()) {
-        // paso 3: obtener los valores de los campos
-        const title = taskTitleInput.value;
-        const desc = taskDescInput.value;
-        const priority = taskPriorityInput.value;
-        const status = taskStatusInput.value;
-
-        // objeto para enviar al servidor
-        const newTask = {
-            userId: currentUser.id,
-            titulo: title,
-            descripcion: desc,
-            prioridad: priority,
-            estado: status,
-            fecha_registro: getCurrentTimestamp()
-        };
-
-        try {
-            // persistir en db.json a través de la api
-            const response = await fetch(`${api_url}/tasks`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newTask)
-            });
-
-            if(response.ok) {
-                // paso 4: crear el nuevo elemento de mensaje (fila de tabla)
-                createMessageElement(currentUser.nombre_completo, title);
-                
-                // paso 5: limpiar el formulario
-                taskForm.reset();
-                
-                // paso 6: limpiar los errores
-                clearError(document.getElementById('taskNameError')); // si existen los spans
-                clearError(document.getElementById('taskDescriptionError'));
-
-                // paso 7: opcional - enfocar el primer campo
-                taskTitleInput.focus();
-            }
-        } catch (error) {
-            console.error("error al guardar en el servidor");
+// --- Acciones: Eliminar y Editar ---
+async function processEliminar(id) {
+    if (confirm("¿Estás seguro de eliminar esta tarea?")) {
+        const exito = await eliminarTarea(id);
+        if (exito) {
+            const card = tasksContainer.querySelector(`[data-id="${id}"]`);
+            if (card) card.remove();
+            totalTasks--;
+            updateMessageCount();
+            if (totalTasks === 0) showEmptyState();
         }
     }
 }
 
-/**
- * limpia los errores cuando el usuario empieza a escribir
- */
-function handleInputChange(event) {
-    // todo: implementar limpieza de errores al escribir
-    const target = event.target;
+function prepararEdicion(tareaCard) {
+    isEditing = true;
+    editTaskId = tareaCard.dataset.id;
+    const filas = tareaCard.querySelectorAll('.task-card__value');
     
-    // remover clase de error visual
-    target.classList.remove('error');
+    document.getElementById('taskTitle').value = filas[0].textContent;
+    document.getElementById('taskDesc').value = filas[1].textContent;
+    document.getElementById('taskPriority').value = filas[2].textContent.charAt(0).toUpperCase() + filas[2].textContent.slice(1).toLowerCase();
+    document.getElementById('taskStatus').value = filas[3].textContent;
+
+    document.querySelector('#taskSection .card__title').textContent = "Modificar Tarea";
+    const btnText = document.querySelector('#taskForm .btn__text');
+    if (btnText) btnText.textContent = "Guardar Cambios";
     
-    // si es el buscador, limpiar el span de error especifico
-    if (target.id === "userDoc") {
-        clearError(searchError);
-    }
+    taskSection.scrollIntoView({ behavior: 'smooth' });
 }
 
-// registro de event listeners
-document.addEventListener('DOMContentLoaded', function() {
-    console.log(' dom completamente cargado y eventos vinculados');
-    
-    // registrar el evento 'submit' en el buscador de usuario
-    searchForm.addEventListener('submit', handleSearchSubmit);
-
-    // registrar el evento 'submit' en el formulario de tareas
-    taskForm.addEventListener('submit', handleFormSubmit);
-
-    // registrar eventos 'input' en los campos para limpieza dinamica
-    userDocInput.addEventListener('input', handleInputChange);
-    taskTitleInput.addEventListener('input', handleInputChange);
-    taskDescInput.addEventListener('input', handleInputChange);
-});
-
-
-/**
- * ============================================
- *                Importaciones
- * ============================================
-*/
-
-// import { getUsuario } from "./use-case/index.js";
-
-
-/**
- * ============================================
-*              Variables y Constantes
- * ============================================
-*/
-
-const api_url = "http://localhost:3001";
-const searchForm = document.querySelector('#searchForm');
-const userDoc = document.querySelector('#userDoc');
-const userDocError = document.querySelector('#searchError');
-
-
-const reglas_documento ={
-    userDoc :{ required: true, mensaje: "el campo no puede estar vacio", typeof: "number" },
-}
-
-/**
- * ============================================
-*              Funciones y Métodos
- * ============================================
-*/
-
-const validarDocumento = (e) => {
-    let respuesta = validar(e, reglas_documento);
-    userDoc.classList.remove('error');
-    if(!respuesta.valido)    {
-        userDoc.classList.add('error');
-        userDocError.textContent = respuesta.errores;
-    }
-    if(!respuesta.valido) {
-        return{
-            esvalido: respuesta.valido
-        }
-    }
-    else {
-        return {
-            esvalido: respuesta.valido,
-            documento: respuesta.value
-        }
-    }
-}
-
-/**
- * ============================================
-*                    Eventos
- * ============================================
-*/
-
+// --- Eventos ---
 searchForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const {esvalido, documento, nombre, genero, ciudad, correo} = validarDocumento(e.target);
-    if(!esvalido) {return;}
+    let check = validar(e.target, reglas_documento);
+    if (!check.valido) {
+        searchError.textContent = check.errores.userDoc;
+        return;
+    }
+
+    try {
+        const res = await fetch(`${api_url}/users/${userDocInput.value.trim()}`);
+        if (!res.ok) throw new Error();
+        const user = await res.json();
+        currentUser = user;
+
+        document.getElementById('infoNombre').textContent = user.nombre_completo;
+        document.getElementById('infoCorreo').textContent = user.correo;
+        userInfoSection.classList.remove('hidden');
+        taskSection.classList.remove('hidden');
+        
+        limpiarTareas();
+        await renderTareasUsuario(user.id);
+        resetForm();
+    } catch {
+        userInfoSection.classList.add('hidden');
+        taskSection.classList.add('hidden');
+        searchError.textContent = "Usuario no encontrado";
+    }
+});
+
+taskForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const taskData = {
+        userId: currentUser.id,
+        titulo: document.getElementById('taskTitle').value,
+        descripcion: document.getElementById('taskDesc').value,
+        prioridad: document.getElementById('taskPriority').value,
+        estado: document.getElementById('taskStatus').value,
+        fecha_registro: getCurrentTimestamp()
+    };
+
+    if (isEditing) {
+        const ok = await editarTarea(editTaskId, taskData);
+        if (ok) {
+            limpiarTareas();
+            await renderTareasUsuario(currentUser.id);
+            resetForm();
+        }
+    } else {
+        const nueva = await postTarea(taskData);
+        if (nueva) {
+            const card = crearCardTarea(nueva);
+            tasksContainer.insertBefore(card, emptyTasksState);
+            totalTasks++;
+            updateMessageCount();
+            hideEmptyState();
+            resetForm();
+        }
+    }
+});
+
+tasksContainer.addEventListener('click', async (e) => {
+    const id = e.target.dataset.id;
+    if (e.target.classList.contains('btn-eliminar')) await processEliminar(id);
+    if (e.target.classList.contains('btn-editar')) prepararEdicion(e.target.closest('.task-card'));
 });

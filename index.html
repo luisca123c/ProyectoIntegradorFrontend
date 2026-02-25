@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Tareas - SENA</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
   <div class="container">
     <header class="header">
@@ -21,7 +19,7 @@
         <form id="searchForm" class="form">
           <div class="form__group">
             <label for="userDoc" class="form__label">Documento del Usuario</label>
-            <input type="text" id="userDoc" class="form__input" placeholder="Ej: 10101">
+            <input type="text" id="userDoc" name="userDoc" class="form__input" placeholder="Ej: 10101">
             <span class="form__error" id="searchError"></span>
           </div>
           <button type="submit" class="btn btn--primary" id="searchBtn">
@@ -47,13 +45,10 @@
             <label for="taskTitle" class="form__label">Título de la Tarea</label>
             <input type="text" id="taskTitle" class="form__input" placeholder="¿Qué hay que hacer?" required>
           </div>
-
           <div class="form__group">
             <label for="taskDesc" class="form__label">Descripción</label>
-            <textarea id="taskDesc" class="form__input form__textarea" placeholder="Detalles de la tarea..." rows="3"
-              required></textarea>
+            <textarea id="taskDesc" class="form__input form__textarea" placeholder="Detalles de la tarea..." rows="3" required></textarea>
           </div>
-
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
             <div class="form__group">
               <label for="taskStatus" class="form__label">Estado</label>
@@ -72,7 +67,6 @@
               </select>
             </div>
           </div>
-
           <button type="submit" class="btn btn--primary">
             <span class="btn__text">Asignar Tarea</span>
             <span class="btn__icon">➕</span>
@@ -86,40 +80,10 @@
         <h2 class="messages-header__title">Tareas del Usuario</h2>
         <span class="messages-header__count" id="taskCount">0 tareas</span>
       </div>
-
-      <div class="card" style="overflow-x: auto;">
-        <table class="task-table">
-          <div class="btn__delete">
-            <button class="btn btn--danger" id="deleteAllBtn">
-              <span class="btn__text">Eliminar tarea</span>
-              <span class="btn__icon">🗑️</span>
-            </button>
-            <!-- <div class="btn__update">
-              <button class="btn btn--secondary" id="updateAllBtn">
-                <span class="btn__text">Editar tarea</span>
-                <span class="btn__icon">✏️</span>
-              </button>
-            </div> -->
-          </div>
-          <thead>
-            <tr>
-              <th>Título</th>
-              <th>Descripción</th>
-              <th>Importancia</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody id="taskTableBody">
-          </tbody>
-        </table>
+      
+      <div id="tasksContainer" class="tasks-container">
         <div class="messages-empty" id="emptyTasks">
           <p class="messages-empty__text">No hay tareas registradas para este usuario</p>
-        </div>
-        <div class="btn__update">
-          <button class="btn btn--secondary" id="updateAllBtn">
-            <span class="btn__text">Editar tarea</span>
-            <span class="btn__icon">✏️</span>
-          </button>
         </div>
       </div>
     </section>
@@ -130,5 +94,4 @@
   </div>
   <script type="module" src="script.js"></script>
 </body>
-
 </html>

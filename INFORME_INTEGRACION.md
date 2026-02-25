@@ -211,3 +211,4 @@ Después de aplicar todos los cambios, al buscar un usuario deben ocurrir estas 
 3. ✅ Si no tiene tareas → aparece el mensaje "No hay tareas registradas"
 4. ✅ Al agregar una nueva tarea → aparece una card nueva sin refrescar la página
 5. ✅ Al buscar otro usuario → las cards anteriores desaparecen y cargan las del nuevo
+    
