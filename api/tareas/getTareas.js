@@ -4,9 +4,7 @@
  * @param {string} userId - El documento del usuario
  * @returns {Promise<Array>} - Lista de tareas del usuario
  */
-export async function getTareas(userId) {
-    const api_url = "http://localhost:3001";
-
+export async function getTareas(api_url, userId) {
     try {
         // Traemos TODAS las tareas del servidor
         const response = await fetch(`${api_url}/tasks`);

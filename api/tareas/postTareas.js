@@ -3,9 +3,7 @@
  * @param {Object} nuevaTarea - Objeto con los datos de la tarea a crear
  * @returns {Promise<Object|null>} - La tarea creada o null si hubo error
  */
-export async function postTarea(nuevaTarea) {
-    const api_url = "http://localhost:3001";
-
+export async function postTarea(api_url, nuevaTarea) {
     try {
         const response = await fetch(`${api_url}/tasks`, {
             method: 'POST',

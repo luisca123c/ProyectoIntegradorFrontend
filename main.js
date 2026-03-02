@@ -4,9 +4,8 @@ import { getTareas } from './api/tareas/getTareas.js';
 import { postTarea } from './api/tareas/postTareas.js';
 import { eliminarTarea } from './api/tareas/deleteTarea.js';
 import { editarTarea } from './api/tareas/updateTarea.js';
-
+import { api_url, reglas_documento } from './config/config.js';
 // --- Selección de elementos ---
-const api_url = "http://localhost:3001";
 const searchForm = document.getElementById('searchForm');
 const taskForm = document.getElementById('taskForm');
 const userDocInput = document.getElementById('userDoc');
@@ -24,9 +23,7 @@ let totalTasks = 0;
 let isEditing = false;
 let editTaskId = null;
 
-const reglas_documento = {
-    userDoc: { required: true, mensaje: "El campo no puede estar vacío", typeof: "text" },
-};
+
 
 // --- Utilidades ---
 function updateMessageCount() {
@@ -60,7 +57,7 @@ function limpiarTareas() {
 }
 
 async function renderTareasUsuario(userId) {
-    const tareas = await getTareas(userId);
+    const tareas = await getTareas(api_url, userId);
     if (tareas.length === 0) {
         showEmptyState();
         return;
@@ -154,7 +151,7 @@ taskForm.addEventListener('submit', async (e) => {
             resetForm();
         }
     } else {
-        const nueva = await postTarea(taskData);
+        const nueva = await postTarea(api_url,taskData);
         if (nueva) {
             const card = crearCardTarea(nueva);
             tasksContainer.insertBefore(card, emptyTasksState);
