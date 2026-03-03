@@ -5,6 +5,8 @@ import { postTarea } from './api/tareas/postTareas.js';
 import { eliminarTarea } from './api/tareas/deleteTarea.js';
 import { editarTarea } from './api/tareas/updateTarea.js';
 import { api_url, reglas_documento } from './config/config.js';
+import { inicializarOrdenamiento } from './service/ordenamientoTareas.js';
+
 // --- Selección de elementos ---
 const searchForm = document.getElementById('searchForm');
 const taskForm = document.getElementById('taskForm');
@@ -16,13 +18,14 @@ const tasksContainer = document.getElementById('tasksContainer');
 const taskCountLabel = document.getElementById('taskCount');
 const emptyTasksState = document.getElementById('emptyTasks');
 const searchError = document.getElementById('searchError');
+const contenedorOrden = document.getElementById('ordenContainer');
 
 // --- Estado ---
 let currentUser = null;
 let totalTasks = 0;
 let isEditing = false;
 let editTaskId = null;
-
+let tareasActuales = [];
 
 
 // --- Utilidades ---
@@ -56,21 +59,50 @@ function limpiarTareas() {
     showEmptyState();
 }
 
-async function renderTareasUsuario(userId) {
-    const tareas = await getTareas(api_url, userId);
-    if (tareas.length === 0) {
-        showEmptyState();
-        return;
+// async function renderTareasUsuario(userId) {
+//     const tareas = await getTareas(api_url, userId);
+//     if (tareas.length === 0) {
+//         showEmptyState();
+//         return;
+//     }
+//     tareas.forEach(tarea => {
+//         const card = crearCardTarea(tarea);
+//         tasksContainer.insertBefore(card, emptyTasksState);
+//         totalTasks++;
+//     });
+//     updateMessageCount();
+//     hideEmptyState();
+// }
+
+function renderizarTareas(tareas) {
+    tasksContainer.querySelectorAll('.task-card').forEach(c => c.remove());
+    
+    if (tareas.length === 0) { 
+        showEmptyState(); 
+        totalTasks = 0;
+        updateMessageCount();
+        return; 
     }
-    tareas.forEach(tarea => {
-        const card = crearCardTarea(tarea);
-        tasksContainer.insertBefore(card, emptyTasksState);
-        totalTasks++;
-    });
-    updateMessageCount();
+    
     hideEmptyState();
+    tareas.forEach(t => tasksContainer.insertBefore(crearCardTarea(t), emptyTasksState));
+    totalTasks = tareas.length;
+    updateMessageCount();
 }
 
+async function renderTareasUsuario(userId) {
+    tareasActuales = await getTareas(api_url, userId); 
+    renderizarTareas(tareasActuales); 
+}
+
+// Inicialización del ordenamiento
+if (contenedorOrden) {
+    inicializarOrdenamiento(
+        contenedorOrden,
+        (ordenadas) => renderizarTareas(ordenadas),
+        () => tareasActuales
+    );
+}
 // --- Acciones: Eliminar y Editar ---
 async function processEliminar(id) {
     if (confirm("¿Estás seguro de eliminar esta tarea?")) {

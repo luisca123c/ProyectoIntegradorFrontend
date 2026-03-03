@@ -236,9 +236,27 @@ body {
     min-height: 1.25rem;
     font-weight: var(--font-weight-medium);
 }
+/* Estilos para el Requisito RF02 - Ordenamiento */
+
+.orden-group {
+    display: flex;
+    gap: var(--spacing-md); 
+    align-items: center;
+    margin-top: var(--spacing-sm);
+}
+
+.orden-group .form__input {
+    flex: 1;
+    margin-bottom: 0; 
+}
+
+.btn--orden {
+    margin-top: 0 !important; 
+    min-width: 160px;
+}
 
 /* ============================================
-   BOTONES
+    BOTONES
    ============================================ */
 
 .btn {
