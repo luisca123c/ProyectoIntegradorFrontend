@@ -1,4 +1,5 @@
 import { validar } from "./service/validacionDocumento.js";
+import { notificarExito, notificarError, notificarInfo } from './service/notificaciones.js';
 import { crearCardTarea } from './ui/tareas.js';
 import { getTareas } from './api/tareas/getTareas.js';
 import { postTarea } from './api/tareas/postTareas.js';
@@ -73,15 +74,16 @@ async function renderTareasUsuario(userId) {
 
 // --- Acciones: Eliminar y Editar ---
 async function processEliminar(id) {
-    if (confirm("¿Estás seguro de eliminar esta tarea?")) {
-        const exito = await eliminarTarea(api_url, id);
-        if (exito) {
-            const card = tasksContainer.querySelector(`[data-id="${id}"]`);
-            if (card) card.remove();
-            totalTasks--;
-            updateMessageCount();
-            if (totalTasks === 0) showEmptyState();
-        }
+    const exito = await eliminarTarea(api_url, id);
+    if (exito) {
+        const card = tasksContainer.querySelector(`[data-id="${id}"]`);
+        if (card) card.remove();
+        totalTasks--;
+        updateMessageCount();
+        if (totalTasks === 0) showEmptyState();
+        notificarExito('Tarea eliminada correctamente.');
+    } else {
+        notificarError('No se pudo eliminar la tarea.');
     }
 }
 
@@ -125,10 +127,12 @@ searchForm.addEventListener('submit', async (e) => {
         limpiarTareas();
         await renderTareasUsuario(user.id);
         resetForm();
+        notificarInfo(`Usuario ${user.nombre_completo} cargado.`);
     } catch {
         userInfoSection.classList.add('hidden');
         taskSection.classList.add('hidden');
         searchError.textContent = "Usuario no encontrado";
+        notificarError('No se encontró el usuario.');
     }
 });
 
@@ -144,14 +148,15 @@ taskForm.addEventListener('submit', async (e) => {
     };
 
     if (isEditing) {
-        const ok = await editarTarea(api_url,editTaskId, taskData);
+        const ok = await editarTarea(api_url, editTaskId, taskData);
         if (ok) {
             limpiarTareas();
             await renderTareasUsuario(currentUser.id);
             resetForm();
+            notificarExito('Tarea actualizada correctamente.');
         }
     } else {
-        const nueva = await postTarea(api_url,taskData);
+        const nueva = await postTarea(api_url, taskData);
         if (nueva) {
             const card = crearCardTarea(nueva);
             tasksContainer.insertBefore(card, emptyTasksState);
@@ -159,6 +164,9 @@ taskForm.addEventListener('submit', async (e) => {
             updateMessageCount();
             hideEmptyState();
             resetForm();
+            notificarExito('Tarea creada correctamente.');
+        } else {
+            notificarError('No se pudo crear la tarea.');
         }
     }
 });
