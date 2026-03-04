@@ -679,3 +679,59 @@ table th {
     max-width: 65%;
     text-align: right;
 }
+
+/* ============================================
+   RF03 – NOTIFICACIONES
+   ============================================ */
+
+#notificaciones-contenedor {
+    position: fixed;
+    top: 1.2rem;
+    right: 1.2rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    max-width: 340px;
+}
+
+.notificacion {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .75rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .15);
+    font-size: .9rem;
+    animation: notiEntrar .25s ease forwards;
+    background: #fff;
+}
+
+.notificacion--exito { border-left: 4px solid #22c55e; }
+.notificacion--error { border-left: 4px solid #ef4444; }
+.notificacion--info  { border-left: 4px solid #3b82f6; }
+
+.notificacion__mensaje { flex: 1; }
+
+.notificacion__cerrar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: #888;
+}
+
+.notificacion__cerrar:hover { color: #333; }
+
+.notificacion--saliendo { animation: notiSalir .3s ease forwards; }
+
+@keyframes notiEntrar {
+    from { opacity: 0; transform: translateX(40px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes notiSalir {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(40px); }
+}

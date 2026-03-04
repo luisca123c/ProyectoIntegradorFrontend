@@ -1,5 +1,6 @@
-// ... (Tus imports se mantienen igual)
+// --- Imports (Combinados) ---
 import { validar } from "./service/validacionDocumento.js";
+import { notificarExito, notificarError, notificarInfo } from './service/notificaciones.js';
 import { crearCardTarea } from './ui/tareas.js';
 import { getTareas } from './api/tareas/getTareas.js';
 import { postTarea } from './api/tareas/postTareas.js';
@@ -28,7 +29,8 @@ let totalTasks = 0;
 let isEditing = false;
 let editTaskId = null;
 let tareasActuales = [];
-let controlesFiltro = null; // Variable para controlar la activación de filtros
+let controlesFiltro = null;
+let controlesOrden = null;
 
 // --- Utilidades ---
 function updateMessageCount() {
@@ -77,17 +79,15 @@ function renderizarTareas(tareas) {
 async function renderTareasUsuario(userId) {
     tareasActuales = await getTareas(api_url, userId); 
     
-    // Si el módulo de filtros existe, activamos la interfaz (quitar placeholder)
-    if (controlesFiltro) {
-        controlesFiltro.chequearYActivar();
-    }
+    // Activar interfaces si existen
+    if (controlesFiltro) controlesFiltro.chequearYActivar();
+    if (controlesOrden) controlesOrden.chequearYActivar();
     
     renderizarTareas(tareasActuales); 
 }
 
-// --- Inicialización de Módulos (Filtros y Orden) ---
+// --- Inicialización de Módulos ---
 if (contenedorFiltros) {
-    // Guardamos el retorno para poder usar "chequearYActivar"
     controlesFiltro = inicializarFiltros(
         contenedorFiltros,
         (filtradas) => renderizarTareas(filtradas),
@@ -96,7 +96,7 @@ if (contenedorFiltros) {
 }
 
 if (contenedorOrden) {
-    inicializarOrdenamiento(
+    controlesOrden = inicializarOrdenamiento(
         contenedorOrden,
         (ordenadas) => renderizarTareas(ordenadas),
         () => tareasActuales
@@ -108,9 +108,12 @@ async function processEliminar(id) {
     if (confirm("¿Estás seguro de eliminar esta tarea?")) {
         const exito = await eliminarTarea(api_url, id);
         if (exito) {
-            // Actualizar arreglo maestro para que los filtros sigan funcionando bien
+            // Tu lógica: actualiza el arreglo maestro para que los filtros sigan funcionando
             tareasActuales = tareasActuales.filter(t => t.id != id);
             renderizarTareas(tareasActuales);
+            notificarExito('Tarea eliminada correctamente.');
+        } else {
+            notificarError('No se pudo eliminar la tarea.');
         }
     }
 }
@@ -135,7 +138,7 @@ function prepararEdicion(tareaCard) {
 // --- Eventos ---
 searchForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    searchError.textContent = ""; // Limpiar errores previos
+    searchError.textContent = ""; 
     
     let check = validar(e.target, reglas_documento);
     if (!check.valido) {
@@ -150,21 +153,21 @@ searchForm.addEventListener('submit', async (e) => {
         const user = await res.json();
         currentUser = user;
 
-        // Mostrar secciones ANTES de llenar datos por si las keys de la API varían
         userInfoSection.classList.remove('hidden');
         taskSection.classList.remove('hidden');
 
-        // Llenar info (Ajusta 'name' o 'email' según tu API real)
         document.getElementById('infoNombre').textContent = user.nombre_completo || user.name || "N/A";
         document.getElementById('infoCorreo').textContent = user.correo || user.email || "N/A";
 
         limpiarTareas();
         await renderTareasUsuario(user.id);
         resetForm();
+        notificarInfo(`Usuario ${user.nombre_completo || user.name} cargado.`);
     } catch (error) {
         userInfoSection.classList.add('hidden');
         taskSection.classList.add('hidden');
         searchError.textContent = "Usuario no encontrado en el sistema";
+        notificarError('No se encontró el usuario.');
     }
 });
 
@@ -184,13 +187,16 @@ taskForm.addEventListener('submit', async (e) => {
         if (ok) {
             await renderTareasUsuario(currentUser.id);
             resetForm();
+            notificarExito('Tarea actualizada correctamente.');
         }
     } else {
         const nueva = await postTarea(api_url, taskData);
         if (nueva) {
-            // Recargamos todo el set para mantener tareasActuales sincronizado con los filtros
             await renderTareasUsuario(currentUser.id);
             resetForm();
+            notificarExito('Tarea creada correctamente.');
+        } else {
+            notificarError('No se pudo crear la tarea.');
         }
     }
 });
