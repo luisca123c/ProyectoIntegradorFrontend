@@ -1,12 +1,6 @@
-// RF03 – Módulo de Notificaciones
-// No importa nada de otros módulos del proyecto → cero riesgo de dependencias circulares (RNF05)
 
 const DURACION_MS = 3500;
 
-/**
- * Obtiene (o crea) el contenedor de notificaciones en el DOM.
- * @returns {HTMLElement}
- */
 function obtenerContenedor() {
     let contenedor = document.getElementById('notificaciones-contenedor');
     if (!contenedor) {
@@ -19,12 +13,7 @@ function obtenerContenedor() {
     return contenedor;
 }
 
-/**
- * Muestra una notificación en pantalla.
- * @param {string} mensaje  - Texto de la notificación.
- * @param {'exito'|'error'|'info'} tipo - Variante visual.
- * @param {number} [duracion=DURACION_MS] - Tiempo en ms antes del auto-cierre.
- */
+
 function notificar(mensaje, tipo, duracion = DURACION_MS) {
     const iconos = { exito: '✅', error: '❌', info: 'ℹ️' };
     const contenedor = obtenerContenedor();
@@ -32,18 +21,31 @@ function notificar(mensaje, tipo, duracion = DURACION_MS) {
     const noti = document.createElement('div');
     noti.className = `notificacion notificacion--${tipo}`;
     noti.setAttribute('role', 'alert');
-    noti.innerHTML = `
-        <span class="notificacion__icono" aria-hidden="true">${iconos[tipo] ?? '🔔'}</span>
-        <span class="notificacion__mensaje">${mensaje}</span>
-        <button class="notificacion__cerrar" aria-label="Cerrar notificación">×</button>
-    `;
+    // Poner esto:
+    const icono = document.createElement('span');
+    icono.classList.add('notificacion__icono');
+    icono.setAttribute('aria-hidden', 'true');
+    icono.textContent = iconos[tipo] ?? '🔔';
+
+    const texto = document.createElement('span');
+    texto.classList.add('notificacion__mensaje');
+    texto.textContent = mensaje;
+
+    const btnCerrar = document.createElement('button');
+    btnCerrar.classList.add('notificacion__cerrar');
+    btnCerrar.setAttribute('aria-label', 'Cerrar notificación');
+    btnCerrar.textContent = '×';
+
+    noti.appendChild(icono);
+    noti.appendChild(texto);    
+    noti.appendChild(btnCerrar);
 
     const cerrar = () => {
         noti.classList.add('notificacion--saliendo');
         noti.addEventListener('animationend', () => noti.remove(), { once: true });
     };
 
-    noti.querySelector('.notificacion__cerrar').addEventListener('click', cerrar);
+    btnCerrar.addEventListener('click', cerrar);
 
     const timerId = setTimeout(cerrar, duracion);
 
