@@ -9,19 +9,30 @@
 </head>
 
 <body>
-  <div class="container">
+
+  <!-- PANEL USUARIO -->
+  <div id="panelUsuario" class="container">
     <header class="header">
-      <h1 class="header__title">Gestión de Tareas</h1>
-      <p class="header__subtitle">Consulta de usuarios y asignación dinámica de actividades</p>
+      <div class="header__top">
+        <div>
+          <h1 class="header__title">Gestión de Tareas</h1>
+          <p class="header__subtitle">Consulta de usuarios y asignación dinámica de actividades</p>
+        </div>
+        <button id="btnAbrirAdmin" class="btn btn--admin">
+          <span class="btn__text">Panel Admin</span>
+          <span class="btn__icon">🛡️</span>
+        </button>
+      </div>
     </header>
 
+    <!-- Buscar usuario -->
     <section class="form-section">
       <div class="card">
         <h2 class="card__title">1. Identificación del Usuario</h2>
         <form id="searchForm" class="form">
           <div class="form__group">
             <label for="userDoc" class="form__label">Documento del Usuario</label>
-            <input type="text" id="userDoc" name="userDoc" class="form__input" placeholder="Ej: 10101">
+            <input type="text" id="userDoc" name="userDoc" class="form__input" placeholder="Ej: 10103">
             <span class="form__error" id="searchError"></span>
           </div>
           <button type="submit" class="btn btn--primary" id="searchBtn">
@@ -29,7 +40,6 @@
             <span class="btn__icon">🔍</span>
           </button>
         </form>
-
         <div id="userInfo" class="user-info hidden">
           <div class="user-info__content">
             <p><strong>Nombre:</strong> <span id="infoNombre"></span></p>
@@ -39,45 +49,7 @@
       </div>
     </section>
 
-    <section id="taskSection" class="form-section hidden">
-      <div class="card">
-        <h2 class="card__title">2. Registrar Nueva Tarea</h2>
-        <form id="taskForm" class="form">
-          <div class="form__group">
-            <label for="taskTitle" class="form__label">Título de la Tarea</label>
-            <input type="text" id="taskTitle" class="form__input" placeholder="¿Qué hay que hacer?" required>
-          </div>
-          <div class="form__group">
-            <label for="taskDesc" class="form__label">Descripción</label>
-            <textarea id="taskDesc" class="form__input form__textarea" placeholder="Detalles de la tarea..." rows="3"
-              required></textarea>
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div class="form__group">
-              <label for="taskStatus" class="form__label">Estado</label>
-              <select id="taskStatus" class="form__input">
-                <option value="Pendiente">Pendiente</option>
-                <option value="En Progreso">En Progreso</option>
-                <option value="Completada">Completada</option>
-              </select>
-            </div>
-            <div class="form__group">
-              <label for="taskPriority" class="form__label">Importancia</label>
-              <select id="taskPriority" class="form__input">
-                <option value="Baja">Baja</option>
-                <option value="Media">Media</option>
-                <option value="Alta">Alta</option>
-              </select>
-            </div>
-          </div>
-          <button type="submit" class="btn btn--primary">
-            <span class="btn__text">Asignar Tarea</span>
-            <span class="btn__icon">➕</span>
-          </button>
-        </form>
-      </div>
-    </section>
-
+    <!-- Filtros -->
     <section class="form-section">
       <div class="card">
         <h2 class="card__title">🔍 Filtrar Tareas</h2>
@@ -89,6 +61,7 @@
       </div>
     </section>
 
+    <!-- Ordenamiento -->
     <section class="form-section">
       <div class="card">
         <h2 class="card__title">↕️ Ordenar Tareas</h2>
@@ -100,7 +73,7 @@
       </div>
     </section>
 
-    <!-- RF04: Exportar -->
+    <!-- Exportar -->
     <section class="form-section">
       <div class="card">
         <h2 class="card__title">⬇️ Exportar Tareas</h2>
@@ -116,12 +89,12 @@
       </div>
     </section>
 
+    <!-- Lista de tareas -->
     <section class="messages-section">
       <div class="messages-header">
         <h2 class="messages-header__title">Tareas del Usuario</h2>
         <span class="messages-header__count" id="taskCount">0 tareas</span>
       </div>
-
       <div id="tasksContainer" class="tasks-container">
         <div class="messages-empty" id="emptyTasks">
           <p class="messages-empty__text">No hay tareas registradas para este usuario</p>
@@ -130,9 +103,161 @@
     </section>
 
     <footer class="footer">
-      <p class="footer__text">Proyecto Integrador | Gestión de Tareas v3.0.0</p>
+      <p class="footer__text">Proyecto Integrador | Gestión de Tareas v3.1.0</p>
     </footer>
   </div>
+
+  <!-- PANEL ADMINISTRADOR -->
+  <div id="panelAdmin" class="hidden">
+    <div class="container">
+      <header class="header">
+        <div class="header__top">
+          <div>
+            <span class="admin-badge">🛡️ Panel de Administración</span>
+            <h1 class="header__title">Gestión de Tareas</h1>
+          </div>
+          <button id="btnCerrarAdmin" class="btn btn--secondary">
+            <span class="btn__text">← Volver</span>
+          </button>
+        </div>
+      </header>
+
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="tab-admin-tareas">📋 Tareas</button>
+        <button class="tab-btn" data-tab="tab-admin-usuarios">👥 Usuarios</button>
+      </nav>
+
+      <!-- TAB: Tareas -->
+      <div id="tab-admin-tareas" class="tab-content active">
+        <section class="form-section" id="adminTaskFormCard" style="margin-top:1.5rem">
+          <div class="card">
+            <h2 class="card__title" id="adminTaskFormTitle">➕ Nueva Tarea</h2>
+            <form id="adminTaskForm" class="form">
+              <div class="form__group">
+                <label class="form__label">Título *</label>
+                <input type="text" id="adminTaskTitulo" name="adminTaskTitulo" class="form__input"
+                  placeholder="¿Qué hay que hacer?">
+                <span class="form__error" id="errorAdminTaskTitulo"></span>
+              </div>
+              <div class="form__group">
+                <label class="form__label">Descripción *</label>
+                <textarea id="adminTaskDesc" name="adminTaskDesc" class="form__input form__textarea"
+                  rows="2"></textarea>
+                <span class="form__error" id="errorAdminTaskDesc"></span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                <div class="form__group">
+                  <label class="form__label">Estado</label>
+                  <select id="adminTaskEstado" class="form__input">
+                    <option>Pendiente</option>
+                    <option>En Progreso</option>
+                    <option>Completada</option>
+                  </select>
+                </div>
+                <div class="form__group">
+                  <label class="form__label">Prioridad</label>
+                  <select id="adminTaskPrioridad" class="form__input">
+                    <option>Baja</option>
+                    <option>Media</option>
+                    <option>Alta</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form__group">
+                <label class="form__label">Asignar usuarios *</label>
+                <div id="checkboxAdminUsuarios" class="checkbox-group">
+                  <p class="filtros__placeholder" style="font-size:.85rem">Cargando...</p>
+                </div>
+              </div>
+              <div style="display:flex;gap:.75rem">
+                <button type="submit" class="btn btn--primary">
+                  <span id="adminTaskBtnLabel">Crear Tarea</span>
+                </button>
+                <button type="button" id="btnCancelarAdminTask" class="btn btn--secondary hidden">Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="card">
+            <div class="filtros-toolbar">
+              <div class="filtros__grupo">
+                <label class="form__label">Estado</label>
+                <select id="filtroAdminEstado" class="form__input form__input--sm">
+                  <option value="">Todos</option>
+                  <option>Pendiente</option>
+                  <option>En Progreso</option>
+                  <option>Completada</option>
+                </select>
+              </div>
+              <div class="filtros__grupo">
+                <label class="form__label">Prioridad</label>
+                <select id="filtroAdminPrioridad" class="form__input form__input--sm">
+                  <option value="">Todas</option>
+                  <option>Alta</option>
+                  <option>Media</option>
+                  <option>Baja</option>
+                </select>
+              </div>
+              <div class="filtros__grupo">
+                <label class="form__label">ID Usuario</label>
+                <input type="text" id="filtroAdminUser" class="form__input form__input--sm" placeholder="Ej: 10103">
+              </div>
+              <button id="btnFiltrarAdmin" class="btn btn--primary btn--sm" style="align-self:flex-end">Filtrar</button>
+              <button id="btnLimpiarAdmin" class="btn btn--secondary btn--sm"
+                style="align-self:flex-end">Limpiar</button>
+            </div>
+          </div>
+        </section>
+
+        <div class="messages-header">
+          <h2 class="messages-header__title">Todas las Tareas</h2>
+          <span class="messages-header__count" id="adminTaskCount">0</span>
+        </div>
+        <div id="adminTasksList" class="tasks-container"></div>
+      </div>
+
+      <!-- TAB: Usuarios -->
+      <div id="tab-admin-usuarios" class="tab-content">
+        <section class="form-section" style="margin-top:1.5rem">
+          <div class="card">
+            <h2 class="card__title" id="userAdminFormTitle">➕ Nuevo Usuario</h2>
+            <form id="userAdminForm" class="form">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                <div class="form__group">
+                  <label class="form__label">Nombre completo *</label>
+                  <input type="text" id="adminUserNombre" name="adminUserNombre" class="form__input"
+                    placeholder="Nombre Apellido">
+                  <span class="form__error" id="errorAdminUserNombre"></span>
+                </div>
+                <div class="form__group">
+                  <label class="form__label">Correo *</label>
+                  <input type="email" id="adminUserCorreo" name="adminUserCorreo" class="form__input"
+                    placeholder="correo@email.com">
+                  <span class="form__error" id="errorAdminUserCorreo"></span>
+                </div>
+              </div>
+              <div style="display:flex;gap:.75rem">
+                <button type="submit" class="btn btn--primary">
+                  <span id="userAdminBtnLabel">Crear Usuario</span>
+                </button>
+                <button type="button" id="btnCancelarUserAdmin" class="btn btn--secondary hidden">Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <div class="messages-header">
+          <h2 class="messages-header__title">Usuarios registrados</h2>
+          <span class="messages-header__count" id="userAdminCount">0</span>
+        </div>
+        <div id="usersAdminList" class="tasks-container"></div>
+      </div>
+
+    </div>
+  </div>
+
   <script type="module" src="/src/main.js"></script>
 </body>
 
