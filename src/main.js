@@ -1,5 +1,5 @@
 // ============================================================
-// IMPORTS — misma estructura del equipo, ampliada
+// IMPORTS
 // ============================================================
 import { validar, validarConUI, limpiarErrores } from "./service/validacionDocumento.js";
 import { notificarExito, notificarError, notificarInfo } from './service/notificaciones.js';
