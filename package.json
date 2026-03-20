@@ -1,6 +1,6 @@
 {
   "name": "proyectointegradorfrontend",
-  "version": "3.3.0",
+  "version": "4.0.0",
   "description": "| Nombre | Rol |\r | :--- | :--- |\r | **Julián Andrés Diaz Chaparro** | Product Owner |\r | **Luis Carlos Villamizar Sanchez** | Backend |\r | **Carol Dayana Lizarazo Colmenares** | Frontend |\r | **Josue Chaparro Oviedo** | Frontend |",
   "scripts": {
   "dev": "vite",
