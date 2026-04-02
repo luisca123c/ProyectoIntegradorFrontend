@@ -227,6 +227,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 async function iniciarAdmin() {
     if (todosUsuarios.length === 0) todosUsuarios = await getUsuarios(api_url);
     await cargarDashboard();
+    await cargarTareasAdmin();
 }
 
 // ============================================================
@@ -432,11 +433,6 @@ function resetUserForm() {
     const btnCancel = document.getElementById('btnCancelarUserAdmin');
     if (btnCancel) btnCancel.classList.add('hidden');
 }
-
-document.querySelector('[data-tab="tab-admin-usuarios"]')?.addEventListener('click', () => {
-    resetUserForm();
-    cargarUsuariosAdmin();
-});
 
 document.getElementById('userAdminForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
