@@ -2,12 +2,12 @@
   "name": "proyectointegradorfrontend",
   "version": "4.0.0",
   "description": "| Nombre | Rol |\r | :--- | :--- |\r | **Julián Andrés Diaz Chaparro** | Product Owner |\r | **Luis Carlos Villamizar Sanchez** | Backend |\r | **Carol Dayana Lizarazo Colmenares** | Frontend |\r | **Josue Chaparro Oviedo** | Frontend |",
-"scripts": {
+  "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "start": "vite"
-},
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JulianDiaz454/ProyectoIntegradorFrontend.git"
@@ -22,5 +22,8 @@
   "homepage": "https://github.com/JulianDiaz454/ProyectoIntegradorFrontend#readme",
   "devDependencies": {
     "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "sweetalert2": "^11.26.24"
   }
 }
