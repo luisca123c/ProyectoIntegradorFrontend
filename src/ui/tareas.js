@@ -64,6 +64,7 @@ export const crearCardTarea = (tarea, usuarios = []) => {
     card.appendChild(crearFila('Título', tarea.titulo));
     card.appendChild(crearFila('Descripción', tarea.descripcion));
     card.appendChild(crearFila('Fecha Registro', tarea.fecha_registro));
+    card.appendChild(crearFila('Última modificación', tarea.fecha_actualizacion));
     card.appendChild(crearFilaConElemento('Importancia', crearBadgePrioridad(tarea.prioridad)));
     card.appendChild(crearFila('Estado', tarea.estado));
 
@@ -121,6 +122,7 @@ export const crearCardTareaAdmin = (tarea, usuarios = []) => {
     card.appendChild(crearFila('Título', tarea.titulo));
     card.appendChild(crearFila('Descripción', tarea.descripcion));
     card.appendChild(crearFila('Fecha Registro', tarea.fecha_registro));
+    card.appendChild(crearFila('Última modificación', tarea.fecha_actualizacion));
     card.appendChild(crearFilaConElemento('Importancia', crearBadgePrioridad(tarea.prioridad)));
     card.appendChild(crearFila('Estado', tarea.estado));
 
