@@ -2,7 +2,7 @@
 // IMPORTS
 // ============================================================
 import { validar, validarConUI, limpiarErrores } from "./service/validacionDocumento.js";
-import { notificarExito, notificarError, notificarInfo } from './service/notificaciones.js';
+import { notificarExito, notificarError, notificarInfo, confirmar } from './service/notificaciones.js';
 import { crearCardTarea, crearCardTareaAdmin } from './ui/tareas.js';
 import { crearCardUsuario } from './ui/usuarios.js';
 import { getTareas, getTodasLasTareas } from './api/tareas/getTareas.js';
@@ -227,6 +227,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 async function iniciarAdmin() {
     if (todosUsuarios.length === 0) todosUsuarios = await getUsuarios(api_url);
     await cargarDashboard();
+    await cargarTareasAdmin();
 }
 
 // ============================================================
@@ -399,7 +400,7 @@ document.getElementById('adminTasksList')?.addEventListener('click', async (e) =
     }
 
     if (e.target.classList.contains('btn-eliminar-admin')) {
-        if (!confirm('¿Eliminar esta tarea?')) return;
+        if (!await confirmar('Esta acción no se puede deshacer.')) return;
         await eliminarTarea(api_url, id);
         notificarExito('Tarea eliminada ✓');
         await cargarTareasAdmin();
@@ -432,11 +433,6 @@ function resetUserForm() {
     const btnCancel = document.getElementById('btnCancelarUserAdmin');
     if (btnCancel) btnCancel.classList.add('hidden');
 }
-
-document.querySelector('[data-tab="tab-admin-usuarios"]')?.addEventListener('click', () => {
-    resetUserForm();
-    cargarUsuariosAdmin();
-});
 
 document.getElementById('userAdminForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -492,7 +488,7 @@ document.getElementById('usersAdminList')?.addEventListener('click', async (e) =
     }
 
     if (e.target.classList.contains('btn-eliminar-user')) {
-        if (!confirm('¿Eliminar este usuario?')) return;
+        if (!await confirmar('Esta acción no se puede deshacer.')) return;
         await eliminarUsuario(api_url, id);
         notificarExito('Usuario eliminado ✓');
         await cargarUsuariosAdmin();

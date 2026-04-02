@@ -1,4 +1,4 @@
-# Frontend proyecto integrador
+# Frontend — Proyecto Integrador
 
 ## Participantes
 
@@ -14,26 +14,51 @@
 ## Requisitos previos
 
 - [Node.js](https://nodejs.org/) instalado
-- [npm](https://www.npmjs.com/) (viene incluido con Node.js)
+- El **backend** corriendo en `http://localhost:3000` (ver README del repositorio de backend)
 
-## Instalación
+---
 
-Luego de clonar el repositorio, instala las dependencias:
+## Instalación y puesta en marcha
+
+### 1. Clonar y ubicarse en la rama correcta
+
+```bash
+git checkout main
+```
+
+### 2. Instalar dependencias
 
 ```bash
 npm install
 ```
 
+### 3. Iniciar el servidor de desarrollo
+
+```bash
+npm run dev
+```
+
+La aplicación estará disponible en `http://localhost:5173`.
+
+> El frontend consume la API del backend en `http://localhost:3000/api`. Asegúrate de que el backend esté corriendo antes de usar la aplicación.
+
+---
+
 ## Comandos disponibles
 
 | Comando | Descripción |
 | :--- | :--- |
-| `npm run start` | **Comando principal** — levanta Vite y json-server al mismo tiempo |
-| `npm run dev` | Solo el servidor de desarrollo con Vite (sin datos) |
-| `npm run server` | Solo json-server en `http://localhost:3001` (sin interfaz) |
+| `npm run dev` | Inicia el servidor de desarrollo con Vite |
 | `npm run build` | Genera la carpeta `dist/` optimizada para producción |
 | `npm run preview` | Previsualiza el build de producción localmente |
 
-> Para ejecutar el proyecto completo usa siempre `npm run start`.
-> La app estará disponible en `http://localhost:5173` y los datos en `http://localhost:3001`.
+---
 
+## Orden de arranque del proyecto completo
+
+Para usar el proyecto es necesario tener **dos terminales abiertas**:
+
+| Terminal | Repositorio | Comando |
+| :--- | :--- | :--- |
+| 1 | `backend` | `npm run dev` |
+| 2 | `frontend` | `npm run dev` |

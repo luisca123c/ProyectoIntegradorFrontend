@@ -11,19 +11,10 @@ export const getUsuarios = async (api_url) => {
 };
 
 export const crearUsuario = async (api_url, datos) => {
-    // Calcula el siguiente ID numérico secuencial para evitar IDs aleatorios
-    const todos = await getUsuarios(api_url);
-    const idsNumericos = todos
-        .map(u => parseInt(u.id, 10))
-        .filter(n => !isNaN(n));
-    const siguienteId = idsNumericos.length > 0
-        ? String(Math.max(...idsNumericos) + 1)
-        : '1';
-
     const res = await fetch(`${api_url}/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: siguienteId, ...datos, activo: true })
+        body: JSON.stringify({ ...datos, activo: true })
     });
     if (!res.ok) throw new Error('Error al crear usuario');
     return res.json();
@@ -45,10 +36,10 @@ export const eliminarUsuario = async (api_url, id) => {
 };
 
 export const toggleActivoUsuario = async (api_url, id, activo) => {
-    const res = await fetch(`${api_url}/users/${id}`, {
+    const res = await fetch(`${api_url}/users/${id}/estado`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ activo })
+        body: JSON.stringify({ estado: activo })
     });
     if (!res.ok) throw new Error('Error al cambiar estado');
     return res.json();

@@ -1,4 +1,4 @@
-export const editarTarea = async (api_url,id, datos) => {
+export const editarTarea = async (api_url, id, datos) => {
     const solicitud = await fetch(`${api_url}/tasks/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -9,7 +9,7 @@ export const editarTarea = async (api_url,id, datos) => {
 };
 export const actualizarEstadoTarea = async (api_url, id, estado) => {
     try {
-        const res = await fetch(`${api_url}/tasks/${id}`, {
+        const res = await fetch(`${api_url}/tasks/${id}/estado`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ estado })
